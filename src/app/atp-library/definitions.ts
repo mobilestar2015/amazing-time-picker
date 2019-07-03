@@ -24,6 +24,7 @@ export interface TimePickerConfig {
   onlyMinute?: boolean;
   onlyAM?: boolean;
   onlyPM?: boolean;
+  inline?: boolean;
 }
 
 export interface RangeTime {

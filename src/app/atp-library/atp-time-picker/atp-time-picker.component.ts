@@ -1,4 +1,4 @@
-import { Component, ViewChild, ViewContainerRef, Output, ComponentFactoryResolver, OnInit, ApplicationRef, EventEmitter
+import { Component, ViewChild, ViewContainerRef, Output, ComponentFactoryResolver, OnInit, ApplicationRef, EventEmitter, Input
 } from '@angular/core';
 import { TimePickerComponent } from '../time-picker/time-picker.component';
 import { TimePickerConfig } from '../definitions';
@@ -15,10 +15,12 @@ import { Subject } from 'rxjs';
 })
 
 export class AtpTimePickerComponent implements OnInit {
+  @Input("inline") inline: boolean = true;
   @ViewChild('container', { read: ViewContainerRef }) container: ViewContainerRef;
   @Output() timeSelected: EventEmitter<string> = new EventEmitter<string>();
   public config: TimePickerConfig = {};
 
+  private tsc;
   constructor(
     private resolver: ComponentFactoryResolver,
     private appRef: ApplicationRef,
@@ -30,7 +32,8 @@ export class AtpTimePickerComponent implements OnInit {
       time: config.time || '00:00',
       theme: ['light', 'dark', 'material'].indexOf(config.theme) > 0 ? config.theme : 'light' || config.theme || 'light',
       rangeTime: config.rangeTime || {start: '0:0', end: '24:0'},
-      arrowStyle: config.arrowStyle || {}
+      arrowStyle: config.arrowStyle || {},
+      inline: this.inline
     };
     config.arrowStyle = {
       background: (config.arrowStyle.background) ?
@@ -51,5 +54,14 @@ export class AtpTimePickerComponent implements OnInit {
     tsc.instance.subject.asObservable().subscribe(time => {
       this.timeSelected.emit(time);
     });
+    this.tsc = tsc;
+  }
+
+  public getSelectedTime() {
+    if (this.tsc) {
+      return this.tsc.instance.GetTime();
+    } else {
+      return null;
+    }
   }
 }
