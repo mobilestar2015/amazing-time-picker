@@ -18,7 +18,7 @@ export class AtpTimePickerComponent implements OnInit {
   @Input("inline") inline: boolean = true;
   @ViewChild('container', { read: ViewContainerRef }) container: ViewContainerRef;
   @Output() timeSelected: EventEmitter<string> = new EventEmitter<string>();
-  public config: TimePickerConfig = {};
+  @Input("config") config: TimePickerConfig = {};
 
   private tsc;
   constructor(
@@ -33,7 +33,9 @@ export class AtpTimePickerComponent implements OnInit {
       theme: ['light', 'dark', 'material'].indexOf(config.theme) > 0 ? config.theme : 'light' || config.theme || 'light',
       rangeTime: config.rangeTime || {start: '0:0', end: '24:0'},
       arrowStyle: config.arrowStyle || {},
-      inline: this.inline
+      inline: this.inline,
+      changeToMinutes: config.changeToMinutes || true,
+      animation: config.animation || 'fade'
     };
     config.arrowStyle = {
       background: (config.arrowStyle.background) ?
@@ -55,6 +57,10 @@ export class AtpTimePickerComponent implements OnInit {
       this.timeSelected.emit(time);
     });
     this.tsc = tsc;
+  }
+
+  updateConfig(key, value) {
+    this.tsc.instance.config[key] = value;
   }
 
   public getSelectedTime() {
